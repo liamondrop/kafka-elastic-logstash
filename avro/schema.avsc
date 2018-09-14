@@ -1,0 +1,26 @@
+{
+    "type": "record",
+    "name": "VehicleState",
+    "fields": [
+        {
+            "name": "lat",
+            "type": ["double", "null"]
+        },
+        {
+            "name": "lon",
+            "type": ["double", "null"]
+        },
+        {
+            "name": "angle",
+            "type": ["double", "null"]
+        },
+        {
+            "name": "status",
+            "type": "string"
+        },
+        {
+            "name": "mode",
+            "type": "string"
+        }
+    ]
+}
