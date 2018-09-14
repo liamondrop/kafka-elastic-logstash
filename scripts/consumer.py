@@ -22,12 +22,7 @@ consumer = KafkaConsumer(
     value_deserializer=value_deserializer
 )
 
-print KAFKA_TOPIC
-
 for message in consumer:
-    # message value and key are raw bytes -- decode if necessary!
-    # e.g., for unicode: `message.value.decode('utf-8')`
-    # deserialize
     print ("%s:%d:%d: key=%s" % (message.topic, message.partition,
                                  message.offset, message.key))
     print '-' * 40
