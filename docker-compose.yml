@@ -5,9 +5,9 @@ services:
     build:
       context: elasticsearch/
       args:
-        ELK_VERSION: $ELK_VERSION
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        - ELK_VERSION
+    environment: 
+      - ES_JAVA_OPTS
     ulimits:
       memlock:
         soft: -1
@@ -15,17 +15,17 @@ services:
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - esdata:/usr/share/elasticsearch/data
-    ports:
+    ports: 
       - 9200:9200
-    networks:
+    networks: 
       - esnet
 
   logstash:
     container_name: logstash
     build:
       context: logstash/
-      args:
-        ELK_VERSION: $ELK_VERSION
+      args: 
+        - ELK_VERSION
     depends_on:
       - elasticsearch
       - kafka
@@ -37,7 +37,7 @@ services:
       - 5000:5000
       - 9600:9600
     environment:
-      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
+      - LS_JAVA_OPTS
     networks:
       - esnet
 
@@ -46,7 +46,7 @@ services:
     build:
       context: kibana/
       args:
-        ELK_VERSION: $ELK_VERSION
+        - ELK_VERSION
     depends_on:
       - elasticsearch
     ports:
