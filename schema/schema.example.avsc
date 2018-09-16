@@ -9,6 +9,10 @@
         {
             "name": "value",
             "type": "int"
+        },
+        {
+            "name": "description",
+            "type": "string"
         }
     ]
 }

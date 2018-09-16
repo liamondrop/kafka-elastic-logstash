@@ -1,5 +1,30 @@
 version: '2.2'
 services:
+  zookeeper:
+    container_name: zookeeper
+    image: wurstmeister/zookeeper
+    ports:
+      - 2181:2181
+    networks:
+      - esnet
+
+  kafka:
+    container_name: kafka
+    build:
+      context: kafka/
+      args:
+        - KAFKA_VERSION
+    depends_on:
+      - zookeeper
+    ports:
+      - $KAFKA_PORT:$KAFKA_PORT
+    environment:
+      KAFKA_PORT: $KAFKA_PORT
+      KAFKA_ADVERTISED_HOST_NAME: $KAFKA_HOST
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    networks:
+      - esnet
+
   elasticsearch:
     container_name: elasticsearch
     build:
@@ -32,7 +57,7 @@ services:
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-      - ./python/test-schema.avsc:/usr/share/avro/${SCHEMA_FILE}:ro
+      - ${SCHEMA_PATH}:/usr/share/schema.avsc:ro
     environment:
       - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
     networks:
@@ -51,58 +76,32 @@ services:
     networks:
       - esnet
 
-  zookeeper:
-    container_name: zookeeper
-    image: wurstmeister/zookeeper
-    ports:
-      - 2181:2181
-    networks:
-      - esnet
-
-  kafka:
-    container_name: kafka
-    build:
-      context: kafka/
-    depends_on:
-      - zookeeper
-    ports:
-      - 9092:9092
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: $KAFKA_HOST
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - esnet
-
   python-consumer:
-    build:
-      context: python/
-      args:
-        - SCHEMA_FILE
+    container_name: python-consumer
+    build: python/
     depends_on:
       - kafka
     environment:
       - KAFKA_HOST
+      - KAFKA_PORT
       - KAFKA_TOPIC
     volumes:
       - ./python/consumer.py:/home/consumer.py
-      - ./python/test-schema.avsc:/home/schema/${SCHEMA_FILE}:ro
+      - ${SCHEMA_PATH}:/usr/share/schema.avsc:ro
     tty: true
 
   python-producer:
-    build:
-      context: python/
-      args:
-        - SCHEMA_FILE
+    container_name: python-producer
+    build: python/
     depends_on:
       - python-consumer
     environment:
       - KAFKA_HOST
+      - KAFKA_PORT
       - KAFKA_TOPIC
     volumes:
       - ./python/producer.py:/home/producer.py
-      - ./python/test-schema.avsc:/home/schema/${SCHEMA_FILE}:ro
+      - ${SCHEMA_PATH}:/usr/share/schema.avsc:ro
     tty: true
 
 volumes:
