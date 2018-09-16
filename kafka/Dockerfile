@@ -1,3 +1,0 @@
-ARG KAFKA_VERSION
-
-FROM wurstmeister/kafka:${KAFKA_VERSION}

@@ -9,8 +9,7 @@ from kafka.errors import KafkaError
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-KAFKA_URI = '{}:{}'.format(
-    os.environ['KAFKA_HOST'], os.environ['KAFKA_PORT'])
+KAFKA_URI = '{}:9092'.format(os.environ['KAFKA_HOST'])
 KAFKA_TOPIC = os.environ['KAFKA_TOPIC']
 SCHEMA_PATH = '/usr/share/schema.avsc'
 
