@@ -42,3 +42,8 @@ Thumbs.db
 venv/*
 
 .env
+
+# Ignore all schema files except for example #
+##############################################
+schema/*
+!schema/schema.example.avsc
