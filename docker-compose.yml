@@ -60,6 +60,7 @@ services:
       - esnet
 
   kibana:
+    container_name: kibana
     image: docker.elastic.co/kibana/kibana:${ELK_VERSION}
     depends_on:
       - elasticsearch
